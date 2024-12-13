@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bowling Stats</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="displayBowlingStats()">
+    <nav class="navbar">
+        <img src="logo.png" alt="Cricket Stats Logo">
+        <div class="navbar-links">
+            <a href="index.html">Home</a>
+            <a href="batting.html">Batting Stats</a>
+            <a href="bowling.html">Bowling Stats</a>
+        </div>
+    </nav>
+    <h1>Bowling Stats</h1>
+    <div id="bowlingStats"></div>
+    
+    <script>
+        function displayBowlingStats() {
+            const bowlingData = JSON.parse(localStorage.getItem("bowlingData"));
+            if (bowlingData) {
+                const bowlingStats = `
+                    <table>
+                        <tr><th>M</th><th>O</th><th>W</th><th>BB</th><th>Avg</th><th>Econ</th><th>Runs</th></tr>
+                        <tr>
+                            <td>${bowlingData.matches}</td>
+                            <td>${bowlingData.overs.toFixed(1)}</td>
+                            <td>${bowlingData.wickets}</td>
+                            <td>${bowlingData.wickets}</td>
+                            <td>${(bowlingData.runsGiven / bowlingData.wickets).toFixed(2)}</td>
+                            <td>${(bowlingData.runsGiven / bowlingData.overs).toFixed(2)}</td>
+                            <td>${bowlingData.runsGiven}</td>
+                        </tr>
+                    </table>`;
+                document.getElementById("bowlingStats").innerHTML = bowlingStats;
+            }
+        }
+    </script>
+</body>
+</html>

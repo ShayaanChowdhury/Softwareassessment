@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Stats Tracker - Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <img src="logo.png" alt="Cricket Stats Logo">
+        <div class="navbar-links">
+            <a href="index.html">Home</a>
+            <a href="batting.html">Batting Stats</a>
+            <a href="bowling.html">Bowling Stats</a>
+        </div>
+    </nav>
+    <h1>Cricket Stats Tracker</h1>
+    <form onsubmit="saveStats(); return false;">
+        <label>Runs: <input type="number" id="runs"></label><br>
+        <label>Balls Faced: <input type="number" id="balls"></label><br>
+        <label>Wickets Taken: <input type="number" id="wickets"></label><br>
+        <label>Runs Given: <input type="number" id="runsGiven"></label><br>
+        <label>Overs Bowled: <input type="number" id="oversBowled"></label><br>
+        <label>Not Out: <input type="checkbox" id="notOut"></label><br>
+        <label>Fours: <input type="number" id="fours"></label><br>
+        <label>Sixes: <input type="number" id="sixes"></label><br>
+        <label>Catches: <input type="number" id="catches"></label><br>
+        <button type="submit">Save Stats</button>
+    </form>
+   
+
+    <script>
+        function saveStats() {
+            const runs = Number(document.getElementById("runs").value);
+            const balls = Number(document.getElementById("balls").value);
+            const wickets = Number(document.getElementById("wickets").value);
+            const runsGiven = Number(document.getElementById("runsGiven").value);
+            const oversBowled = Number(document.getElementById("oversBowled").value);
+            const notOut = document.getElementById("notOut").checked;
+            const fours = Number(document.getElementById("fours").value);
+            const sixes = Number(document.getElementById("sixes").value);
+            const catches = Number(document.getElementById("catches").value);
+
+            const battingData = JSON.parse(localStorage.getItem("battingData")) || {
+                matches: 0, innings: 0, runs: 0, balls: 0, notOuts: 0, fours: 0, sixes: 0, catches: 0,
+            };
+
+            const bowlingData = JSON.parse(localStorage.getItem("bowlingData")) || {
+                matches: 0, overs: 0, wickets: 0, runsGiven: 0,
+            };
+
+            battingData.matches += 1;
+            battingData.innings += 1;
+            battingData.runs += runs;
+            battingData.balls += balls;
+            battingData.notOuts += notOut ? 1 : 0;
+            battingData.fours += fours;
+            battingData.sixes += sixes;
+            battingData.catches += catches;
+
+            bowlingData.matches += 1;
+            bowlingData.overs += oversBowled;
+            bowlingData.wickets += wickets;
+            bowlingData.runsGiven += runsGiven;
+
+            localStorage.setItem("battingData", JSON.stringify(battingData));
+            localStorage.setItem("bowlingData", JSON.stringify(bowlingData));
+
+            alert("Stats saved successfully!");
+        }
+    </script>
+</body>
+</html>

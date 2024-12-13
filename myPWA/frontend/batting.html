@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batting Stats</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="displayBattingStats()">
+    <nav class="navbar">
+        <img src="logo.png" alt="Cricket Stats Logo">
+        <div class="navbar-links">
+            <a href="index.html">Home</a>
+            <a href="batting.html">Batting Stats</a>
+            <a href="bowling.html">Bowling Stats</a>
+        </div>
+    </nav>
+    <h1>Batting Stats</h1>
+    <div id="battingStats"></div>
+
+    <script>
+        function displayBattingStats() {
+            const battingData = JSON.parse(localStorage.getItem("battingData"));
+            if (battingData) {
+                const battingStats = `
+                    <table>
+                        <tr><th>M</th><th>Inn</th><th>Runs</th><th>HS</th><th>Avg</th><th>SR</th><th>NO</th><th>4s</th><th>6s</th><th>Ct</th></tr>
+                        <tr>
+                            <td>${battingData.matches}</td>
+                            <td>${battingData.innings}</td>
+                            <td>${battingData.runs}</td>
+                            <td>${battingData.runs}</td>
+                            <td>${(battingData.runs / (battingData.innings - battingData.notOuts)).toFixed(2)}</td>
+                            <td>${((battingData.runs / battingData.balls) * 100).toFixed(2)}</td>
+                            <td>${battingData.notOuts}</td>
+                            <td>${battingData.fours}</td>
+                            <td>${battingData.sixes}</td>
+                            <td>${battingData.catches}</td>
+                        </tr>
+                    </table>`;
+                document.getElementById("battingStats").innerHTML = battingStats;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -41,4 +41,19 @@ document.getElementById("statsForm")?.addEventListener("submit", async (e) => {
         </tbody>
       </table>`;
   }
-  
+
+
+  function resetStats() {
+    if (confirm("Are you sure you want to reset all stats? This cannot be undone.")) {
+        // Clear localStorage
+        localStorage.clear(); // This will clear all localStorage data
+        
+        // Reset the form
+        document.querySelector('form').reset();
+        
+        // Reload the page to reset all displayed stats
+        window.location.reload();
+        
+        alert("All stats have been reset successfully!");
+    }
+}

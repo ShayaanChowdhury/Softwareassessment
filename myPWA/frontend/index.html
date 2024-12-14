@@ -29,46 +29,53 @@
         <label>Catches: <input type="number" id="catches"></label><br>
         <button type="submit">Save Stats</button>
     </form>
-   
+    <button onclick="resetStats()" class="reset-button">Reset All Stats</button>
 
     <script>
         function saveStats() {
-            const runs = Number(document.getElementById("runs").value);
-            const balls = Number(document.getElementById("balls").value);
-            const wickets = Number(document.getElementById("wickets").value);
-            const runsGiven = Number(document.getElementById("runsGiven").value);
-            const oversBowled = Number(document.getElementById("oversBowled").value);
+            const runs = parseInt(document.getElementById("runs").value) || 0;
+            const balls = parseInt(document.getElementById("balls").value) || 0;
+            const wickets = parseInt(document.getElementById("wickets").value) || 0;
+            const runsGiven = parseInt(document.getElementById("runsGiven").value) || 0;
+            const oversBowled = parseFloat(document.getElementById("oversBowled").value) || 0;
             const notOut = document.getElementById("notOut").checked;
-            const fours = Number(document.getElementById("fours").value);
-            const sixes = Number(document.getElementById("sixes").value);
-            const catches = Number(document.getElementById("catches").value);
+            const fours = parseInt(document.getElementById("fours").value) || 0;
+            const sixes = parseInt(document.getElementById("sixes").value) || 0;
+            const catches = parseInt(document.getElementById("catches").value) || 0;
 
-            const battingData = JSON.parse(localStorage.getItem("battingData")) || {
-                matches: 0, innings: 0, runs: 0, balls: 0, notOuts: 0, fours: 0, sixes: 0, catches: 0,
+            // Initialize battingData and bowlingData objects
+            const battingData = {
+                matches: 1,
+                innings: 1,
+                runs: runs,
+                balls: balls,
+                notOuts: notOut ? 1 : 0,
+                fours: fours,
+                sixes: sixes,
+                catches: catches
             };
 
-            const bowlingData = JSON.parse(localStorage.getItem("bowlingData")) || {
-                matches: 0, overs: 0, wickets: 0, runsGiven: 0,
+            const bowlingData = {
+                matches: 1,
+                overs: oversBowled,
+                wickets: wickets,
+                runsGiven: runsGiven
             };
 
-            battingData.matches += 1;
-            battingData.innings += 1;
-            battingData.runs += runs;
-            battingData.balls += balls;
-            battingData.notOuts += notOut ? 1 : 0;
-            battingData.fours += fours;
-            battingData.sixes += sixes;
-            battingData.catches += catches;
-
-            bowlingData.matches += 1;
-            bowlingData.overs += oversBowled;
-            bowlingData.wickets += wickets;
-            bowlingData.runsGiven += runsGiven;
-
+            // Save to localStorage
             localStorage.setItem("battingData", JSON.stringify(battingData));
             localStorage.setItem("bowlingData", JSON.stringify(bowlingData));
 
             alert("Stats saved successfully!");
+        }
+
+        function resetStats() {
+            if (confirm("Are you sure you want to reset all stats? This cannot be undone.")) {
+                localStorage.clear();
+                document.querySelector('form').reset();
+                alert("All stats have been reset successfully!");
+                window.location.reload();
+            }
         }
     </script>
 </body>

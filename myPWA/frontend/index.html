@@ -14,6 +14,8 @@
             <a href="batting.html">Batting Stats</a>
             <a href="bowling.html">Bowling Stats</a>
             <a href="index.html">Stat calculator</a>
+            <a href="sessionStats.html">Session Stats</a>
+
         </div>
     </nav>
     <h1>Cricket Stats Master</h1>
@@ -43,26 +45,31 @@
             const sixes = parseInt(document.getElementById("sixes").value) || 0;
             const catches = parseInt(document.getElementById("catches").value) || 0;
 
-            // Initialize battingData and bowlingData objects
-            const battingData = {
-                matches: 1,
-                innings: 1,
-                runs: runs,
-                balls: balls,
-                notOuts: notOut ? 1 : 0,
-                fours: fours,
-                sixes: sixes,
-                catches: catches
+            // Retrieve existing batting and bowling data arrays
+            const battingData = JSON.parse(localStorage.getItem("battingData")) || [];
+            const bowlingData = JSON.parse(localStorage.getItem("bowlingData")) || [];
+
+            // Create a new session object for batting and bowling
+            const newBattingSession = {
+                runs,
+                balls,
+                notOut,
+                fours,
+                sixes,
+                catches
             };
 
-            const bowlingData = {
-                matches: 1,
-                overs: oversBowled,
-                wickets: wickets,
-                runsGiven: runsGiven
+            const newBowlingSession = {
+                wickets,
+                runsGiven,
+                overs: oversBowled
             };
 
-            // Save to localStorage
+            // Add the new session to the arrays
+            battingData.push(newBattingSession);
+            bowlingData.push(newBowlingSession);
+
+            // Save updated data to localStorage
             localStorage.setItem("battingData", JSON.stringify(battingData));
             localStorage.setItem("bowlingData", JSON.stringify(bowlingData));
 

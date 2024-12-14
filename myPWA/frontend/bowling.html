@@ -14,6 +14,8 @@
             <a href="batting.html">Batting Stats</a>
             <a href="bowling.html">Bowling Stats</a>
             <a href="index.html">Stat calculator</a>
+            <a href="sessionStats.html">Session Stats</a>
+
         </div>
     </nav>
     <h1>Bowling Stats</h1>
@@ -21,19 +23,26 @@
     
     <script>
         function displayBowlingStats() {
-            const bowlingData = JSON.parse(localStorage.getItem("bowlingData"));
-            if (bowlingData) {
+            const bowlingData = JSON.parse(localStorage.getItem("bowlingData")) || [];
+            if (bowlingData.length > 0) {
+                const totalStats = bowlingData.reduce((acc, session) => {
+                    acc.wickets += session.wickets;
+                    acc.runsGiven += session.runsGiven;
+                    acc.overs += session.overs;
+                    return acc;
+                }, { wickets: 0, runsGiven: 0, overs: 0 });
+
                 const bowlingStats = `
                     <table>
                         <tr><th>M</th><th>O</th><th>W</th><th>BB</th><th>Avg</th><th>Econ</th><th>Runs</th></tr>
                         <tr>
-                            <td>${bowlingData.matches}</td>
-                            <td>${bowlingData.overs.toFixed(1)}</td>
-                            <td>${bowlingData.wickets}</td>
-                            <td>${bowlingData.wickets}</td>
-                            <td>${(bowlingData.runsGiven / bowlingData.wickets).toFixed(2)}</td>
-                            <td>${(bowlingData.runsGiven / bowlingData.overs).toFixed(2)}</td>
-                            <td>${bowlingData.runsGiven}</td>
+                            <td>${bowlingData.length}</td>
+                            <td>${totalStats.overs.toFixed(1)}</td>
+                            <td>${totalStats.wickets}</td>
+                            <td>${totalStats.wickets}</td>
+                            <td>${(totalStats.runsGiven / totalStats.wickets).toFixed(2)}</td>
+                            <td>${(totalStats.runsGiven / totalStats.overs).toFixed(2)}</td>
+                            <td>${totalStats.runsGiven}</td>
                         </tr>
                     </table>`;
                 document.getElementById("bowlingStats").innerHTML = bowlingStats;

@@ -14,6 +14,8 @@
             <a href="batting.html">Batting Stats</a>
             <a href="bowling.html">Bowling Stats</a>
             <a href="index.html">Stat calculator</a>
+            <a href="sessionStats.html">Session Stats</a>
+
         </div>
     </nav>
     <h1>Batting Stats</h1>
@@ -21,22 +23,32 @@
 
     <script>
         function displayBattingStats() {
-            const battingData = JSON.parse(localStorage.getItem("battingData"));
-            if (battingData) {
+            const battingData = JSON.parse(localStorage.getItem("battingData")) || [];
+            if (battingData.length > 0) {
+                const totalStats = battingData.reduce((acc, session) => {
+                    acc.runs += session.runs;
+                    acc.balls += session.balls;
+                    acc.notOuts += session.notOut ? 1 : 0;
+                    acc.fours += session.fours;
+                    acc.sixes += session.sixes;
+                    acc.catches += session.catches;
+                    return acc;
+                }, { runs: 0, balls: 0, notOuts: 0, fours: 0, sixes: 0, catches: 0 });
+
                 const battingStats = `
                     <table>
                         <tr><th>M</th><th>Inn</th><th>Runs</th><th>HS</th><th>Avg</th><th>SR</th><th>NO</th><th>4s</th><th>6s</th><th>Ct</th></tr>
                         <tr>
-                            <td>${battingData.matches}</td>
-                            <td>${battingData.innings}</td>
-                            <td>${battingData.runs}</td>
-                            <td>${battingData.runs}</td>
-                            <td>${(battingData.runs / (battingData.innings - battingData.notOuts)).toFixed(2)}</td>
-                            <td>${((battingData.runs / battingData.balls) * 100).toFixed(2)}</td>
-                            <td>${battingData.notOuts}</td>
-                            <td>${battingData.fours}</td>
-                            <td>${battingData.sixes}</td>
-                            <td>${battingData.catches}</td>
+                            <td>${battingData.length}</td>
+                            <td>${battingData.length}</td>
+                            <td>${totalStats.runs}</td>
+                            <td>${totalStats.runs}</td>
+                            <td>${(totalStats.runs / (battingData.length - totalStats.notOuts)).toFixed(2)}</td>
+                            <td>${((totalStats.runs / totalStats.balls) * 100).toFixed(2)}</td>
+                            <td>${totalStats.notOuts}</td>
+                            <td>${totalStats.fours}</td>
+                            <td>${totalStats.sixes}</td>
+                            <td>${totalStats.catches}</td>
                         </tr>
                     </table>`;
                 document.getElementById("battingStats").innerHTML = battingStats;

@@ -1,8 +1,6 @@
-// Initialize variables for cumulative data and personal bests
 const battingData = JSON.parse(localStorage.getItem("battingData")) || [];
 const bowlingData = JSON.parse(localStorage.getItem("bowlingData")) || [];
 
-// Initialize high score and best bowling
 let highScore = battingData.reduce((max, session) => Math.max(max, session.runs), 0);
 let bestBowling = bowlingData.reduce(
     (best, session) =>
@@ -13,10 +11,8 @@ let bestBowling = bowlingData.reduce(
     { wickets: 0, runsGiven: Infinity }
 );
 
-// Format best bowling stats
 const formatBestBowling = (stats) => `${stats.wickets}/${stats.runsGiven}`;
 
-// Save batting and bowling stats
 function saveStats() {
     const runs = parseInt(document.getElementById("runs").value) || 0;
     const balls = parseInt(document.getElementById("balls").value) || 0;
@@ -28,12 +24,10 @@ function saveStats() {
     const sixes = parseInt(document.getElementById("sixes").value) || 0;
     const catches = parseInt(document.getElementById("catches").value) || 0;
 
-    // Update batting stats
     const battingSession = { runs, balls, notOut, fours, sixes, catches };
     battingData.push(battingSession);
     if (runs > highScore) highScore = runs;
 
-    // Update bowling stats
     const bowlingSession = { wickets, runsGiven, overs: oversBowled };
     bowlingData.push(bowlingSession);
     if (
@@ -43,7 +37,6 @@ function saveStats() {
         bestBowling = { wickets, runsGiven };
     }
 
-    // Save to localStorage
     localStorage.setItem("battingData", JSON.stringify(battingData));
     localStorage.setItem("bowlingData", JSON.stringify(bowlingData));
 
@@ -51,7 +44,6 @@ function saveStats() {
     updateStatsDisplay();
 }
 
-// Update batting stats display
 function updateBattingStats() {
     const totalRuns = battingData.reduce((sum, session) => sum + session.runs, 0);
     const totalBalls = battingData.reduce((sum, session) => sum + session.balls, 0);
@@ -80,7 +72,6 @@ function updateBattingStats() {
     `;
 }
 
-// Update bowling stats display
 function updateBowlingStats() {
     const totalOvers = bowlingData.reduce((sum, session) => sum + session.overs, 0);
     const totalWickets = bowlingData.reduce((sum, session) => sum + session.wickets, 0);
@@ -105,11 +96,9 @@ function updateBowlingStats() {
     `;
 }
 
-// Update both batting and bowling stats
 function updateStatsDisplay() {
     updateBattingStats();
     updateBowlingStats();
 }
 
-// Load stats on page load
 updateStatsDisplay();

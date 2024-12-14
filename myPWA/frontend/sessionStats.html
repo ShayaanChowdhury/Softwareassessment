@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Stats</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <img src="logo.png" alt="Cricket Stats Logo">
+        <div class="navbar-links">
+            <a href="homepage.html">Home</a>
+            <a href="batting.html">Batting Stats</a>
+            <a href="bowling.html">Bowling Stats</a>
+            <a href="index.html">Stat Calculator</a>
+            <a href="sessionStats.html">Session Stats</a>
+        </div>
+    </nav>
+    <h1>Session Stats</h1>
+    
+    <h2>Batting Sessions</h2>
+    <table id="battingSessionsTable">
+        <thead>
+            <tr>
+                <th>Session</th>
+                <th>Runs</th>
+                <th>Balls</th>
+                <th>Not Out</th>
+                <th>Fours</th>
+                <th>Sixes</th>
+                <th>Catches</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Bowling Sessions</h2>
+    <table id="bowlingSessionsTable">
+        <thead>
+            <tr>
+                <th>Session</th>
+                <th>Wickets</th>
+                <th>Runs Given</th>
+                <th>Overs Bowled</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        function loadSessionStats() {
+            const battingData = JSON.parse(localStorage.getItem("battingData")) || [];
+            const bowlingData = JSON.parse(localStorage.getItem("bowlingData")) || [];
+
+            const battingTableBody = document.getElementById("battingSessionsTable").querySelector("tbody");
+            const bowlingTableBody = document.getElementById("bowlingSessionsTable").querySelector("tbody");
+
+            battingTableBody.innerHTML = '';
+            bowlingTableBody.innerHTML = '';
+
+            battingData.forEach((session, index) => {
+                const row = battingTableBody.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${session.runs}</td>
+                    <td>${session.balls}</td>
+                    <td>${session.notOut ? 'Yes' : 'No'}</td>
+                    <td>${session.fours}</td>
+                    <td>${session.sixes}</td>
+                    <td>${session.catches}</td>
+                    <td><button onclick="editBattingSession(${index})">Edit</button></td>
+                `;
+            });
+
+            bowlingData.forEach((session, index) => {
+                const row = bowlingTableBody.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${session.wickets}</td>
+                    <td>${session.runsGiven}</td>
+                    <td>${session.overs}</td>
+                    <td><button onclick="editBowlingSession(${index})">Edit</button></td>
+                `;
+            });
+        }
+
+        function editBattingSession(index) {
+            const battingData = JSON.parse(localStorage.getItem("battingData")) || [];
+            const session = battingData[index];
+
+            const runs = prompt("Edit Runs:", session.runs);
+            const balls = prompt("Edit Balls Faced:", session.balls);
+            const notOut = confirm("Is Not Out?") ? true : false;
+            const fours = prompt("Edit Fours:", session.fours);
+            const sixes = prompt("Edit Sixes:", session.sixes);
+            const catches = prompt("Edit Catches:", session.catches);
+
+            battingData[index] = {
+                runs: parseInt(runs),
+                balls: parseInt(balls),
+                notOut: notOut,
+                fours: parseInt(fours),
+                sixes: parseInt(sixes),
+                catches: parseInt(catches)
+            };
+
+            localStorage.setItem("battingData", JSON.stringify(battingData));
+            loadSessionStats(); 
+        }
+
+        function editBowlingSession(index) {
+            const bowlingData = JSON.parse(localStorage.getItem("bowlingData")) || [];
+            const session = bowlingData[index];
+
+            const wickets = prompt("Edit Wickets:", session.wickets);
+            const runsGiven = prompt("Edit Runs Given:", session.runsGiven);
+            const overs = prompt("Edit Overs Bowled:", session.overs);
+
+            bowlingData[index] = {
+                wickets: parseInt(wickets),
+                runsGiven: parseInt(runsGiven),
+                overs: parseFloat(overs)
+            };
+
+            localStorage.setItem("bowlingData", JSON.stringify(bowlingData));
+            loadSessionStats();    
+        }
+
+        loadSessionStats();
+    </script>
+</body>
+</html> 

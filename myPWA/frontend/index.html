@@ -45,11 +45,9 @@
             const sixes = parseInt(document.getElementById("sixes").value) || 0;
             const catches = parseInt(document.getElementById("catches").value) || 0;
 
-            // Retrieve existing batting and bowling data arrays
             const battingData = JSON.parse(localStorage.getItem("battingData")) || [];
             const bowlingData = JSON.parse(localStorage.getItem("bowlingData")) || [];
 
-            // Create a new session object for batting and bowling
             const newBattingSession = {
                 runs,
                 balls,
@@ -65,11 +63,9 @@
                 overs: oversBowled
             };
 
-            // Add the new session to the arrays
             battingData.push(newBattingSession);
             bowlingData.push(newBowlingSession);
 
-            // Save updated data to localStorage
             localStorage.setItem("battingData", JSON.stringify(battingData));
             localStorage.setItem("bowlingData", JSON.stringify(bowlingData));
 

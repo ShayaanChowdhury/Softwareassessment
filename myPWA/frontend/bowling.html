@@ -29,8 +29,14 @@
                     acc.wickets += session.wickets;
                     acc.runsGiven += session.runsGiven;
                     acc.overs += session.overs;
+
+                    if (session.wickets > acc.bestWickets) {
+                        acc.bestWickets = session.wickets;
+                        acc.bestRunsGiven = session.runsGiven;
+                    }
+
                     return acc;
-                }, { wickets: 0, runsGiven: 0, overs: 0 });
+                }, { wickets: 0, runsGiven: 0, overs: 0, bestWickets: 0, bestRunsGiven: 0 });
 
                 const bowlingStats = `
                     <table>
@@ -39,8 +45,8 @@
                             <td>${bowlingData.length}</td>
                             <td>${totalStats.overs.toFixed(1)}</td>
                             <td>${totalStats.wickets}</td>
-                            <td>${totalStats.wickets}</td>
-                            <td>${(totalStats.runsGiven / totalStats.wickets).toFixed(2)}</td>
+                            <td>${totalStats.bestWickets}-${totalStats.bestRunsGiven}</td>
+                            <td>${(totalStats.runsGiven / totalStats.bestWickets).toFixed(2)}</td>
                             <td>${(totalStats.runsGiven / totalStats.overs).toFixed(2)}</td>
                             <td>${totalStats.runsGiven}</td>
                         </tr>

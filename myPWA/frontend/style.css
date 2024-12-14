@@ -233,3 +233,37 @@ table tr:hover {
 .reset-button:hover {
     background-color: #c82333 !important;
 }
+
+button {
+    border-radius: 8px; 
+    background-color: #e45959; 
+    color: white; 
+    border: none; 
+    padding: 10px 15px; 
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+}
+
+button:hover {
+    background-color: #cf7f06;
+}
+
+
+select {
+    border-radius: 8px; 
+    padding: 10px; 
+    border: 1px solid #0011ff; 
+    background-color: #e45959; 
+    color: white; 
+    font-size: 1rem; 
+    transition: border-color 0.3s; 
+}
+
+select:hover {
+    border-color: #cf7f06; 
+}
+
+select:focus {
+    outline: none; 
+    border-color: #cf7f06; 
+}

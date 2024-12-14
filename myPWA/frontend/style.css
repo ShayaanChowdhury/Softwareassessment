@@ -31,7 +31,9 @@
 .navbar-links a {
     color: rgb(9, 243, 212);
     text-decoration: none;
-    font-weight: bold;
+    font-weight: lighter;
+    font-style: italic;
+    font-family:fantasy;
 }
 
 .navbar-links a:hover {
@@ -48,12 +50,69 @@ body {
     padding: 0 20px;
 }
 
-h1 {
+.hero {
+    width: 100%;
+    height: 100vh;
+    background-color: #30bde0;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(to bottom, #30bde0, #1d809f);
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: #fff;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #f1f1f1;
+}
+
+.featured {
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+}
+
+.featured h2 {
     font-size: 2rem;
     margin-bottom: 20px;
-    text-align: center;
     color: #222;
-    position: relative;
+}
+
+.featured p {
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.featured img {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    margin-top: auto;
+}
+
+.footer p {
+    font-size: 0.9rem;
+    margin: 0;
 }
 
 form {
@@ -144,7 +203,16 @@ table tr:hover {
     background-color: #f1f1f1;
 }
 
-#battingStats, #bowlingStats {
-    width: 100%;
-    max-width: 600px;
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .featured img {
+        max-width: 300px;
+    }
 }

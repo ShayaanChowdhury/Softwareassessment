@@ -6,11 +6,9 @@ const cors = require('cors');
 const app = express();
 const port = 3001;
 
-// Middleware
 app.use(bodyParser.json());
 app.use(cors());
 
-// Set up SQLite database
 const path = require('path');
 const dbPath = path.join(__dirname, 'database', 'cricket_stat.db');
 const db = new sqlite3.Database(dbPath, (err) => {
@@ -21,7 +19,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-// Get all batting stats
 app.get('/api/batting-stats', (req, res) => {
     db.all('SELECT * FROM batting_stats', [], (err, rows) => {
         if (err) {
@@ -32,7 +29,6 @@ app.get('/api/batting-stats', (req, res) => {
     });
 });
 
-// Get all bowling stats
 app.get('/api/bowling-stats', (req, res) => {
     db.all('SELECT * FROM bowling_stats', [], (err, rows) => {
         if (err) {
@@ -43,18 +39,15 @@ app.get('/api/bowling-stats', (req, res) => {
     });
 });
 
-// Add new stats
 app.post('/api/stats', (req, res) => {
     const {
         runs, balls, notOut, fours, sixes, catches,
         wickets, runsGiven, overs
     } = req.body;
 
-    // Start a transaction
     db.serialize(() => {
         db.run('BEGIN TRANSACTION');
 
-        // Insert batting stats
         db.run(
             'INSERT INTO batting_stats (runs, balls, notOut, fours, sixes, catches) VALUES (?, ?, ?, ?, ?, ?)',
             [runs, balls, notOut ? 1 : 0, fours, sixes, catches],
@@ -66,7 +59,6 @@ app.post('/api/stats', (req, res) => {
             }
         );
 
-        // Insert bowling stats
         db.run(
             'INSERT INTO bowling_stats (wickets, runsGiven, overs) VALUES (?, ?, ?)',
             [wickets, runsGiven, overs],
@@ -88,7 +80,6 @@ app.post('/api/stats', (req, res) => {
     });
 });
 
-// Delete all stats
 app.delete('/api/stats', (req, res) => {
     db.serialize(() => {
         db.run('BEGIN TRANSACTION');

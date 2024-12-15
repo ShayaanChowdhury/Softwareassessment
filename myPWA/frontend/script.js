@@ -1,4 +1,3 @@
-// Save stats via API
 document.getElementById("statsForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const stats = {
@@ -21,7 +20,6 @@ document.getElementById("statsForm")?.addEventListener("submit", async (e) => {
   alert(response.ok ? "Stats saved successfully!" : "Failed to save stats.");
 });
 
-// Fetch stats for a given type
 async function fetchStats(type) {
   const response = await fetch(`/api/stats/${type}`);
   const stats = await response.json();
@@ -45,13 +43,11 @@ async function fetchStats(type) {
 
 function resetStats() {
   if (confirm("Are you sure you want to reset all stats? This cannot be undone.")) {
-      // Clear localStorage
-      localStorage.clear(); // This will clear all localStorage data
+
+      localStorage.clear(); 
       
-      // Reset the form
       document.querySelector('form').reset();
       
-      // Reload the page to reset all displayed stats
       window.location.reload();
       
       alert("All stats have been reset successfully!");

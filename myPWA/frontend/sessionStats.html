@@ -52,7 +52,6 @@
 
     <script>
         function loadSessionStats() {
-            // Fetch batting stats
             fetch('http://localhost:3001/api/batting-stats')
                 .then(response => response.json())
                 .then(battingData => {
@@ -74,7 +73,6 @@
                 })
                 .catch(error => console.error('Error fetching batting stats:', error));
 
-            // Fetch bowling stats
             fetch('http://localhost:3001/api/bowling-stats')
                 .then(response => response.json())
                 .then(bowlingData => {
@@ -94,7 +92,6 @@
                 .catch(error => console.error('Error fetching bowling stats:', error));
         }
 
-        // Call to load session stats on page load
         loadSessionStats();
     </script>
 </body>

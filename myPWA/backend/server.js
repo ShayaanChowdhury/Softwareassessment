@@ -1,104 +1,122 @@
-const battingData = JSON.parse(localStorage.getItem("battingData")) || [];
-const bowlingData = JSON.parse(localStorage.getItem("bowlingData")) || [];
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-let highScore = battingData.reduce((max, session) => Math.max(max, session.runs), 0);
-let bestBowling = bowlingData.reduce(
-    (best, session) =>
-        session.wickets > best.wickets ||
-        (session.wickets === best.wickets && session.runsGiven < best.runsGiven)
-            ? session
-            : best,
-    { wickets: 0, runsGiven: Infinity }
-);
+const app = express();
+const port = 3001;
 
-const formatBestBowling = (stats) => `${stats.wickets}/${stats.runsGiven}`;
+// Middleware
+app.use(bodyParser.json());
+app.use(cors());
 
-function saveStats() {
-    const runs = parseInt(document.getElementById("runs").value) || 0;
-    const balls = parseInt(document.getElementById("balls").value) || 0;
-    const wickets = parseInt(document.getElementById("wickets").value) || 0;
-    const runsGiven = parseInt(document.getElementById("runsGiven").value) || 0;
-    const oversBowled = parseFloat(document.getElementById("oversBowled").value) || 0;
-    const notOut = document.getElementById("notOut").checked;
-    const fours = parseInt(document.getElementById("fours").value) || 0;
-    const sixes = parseInt(document.getElementById("sixes").value) || 0;
-    const catches = parseInt(document.getElementById("catches").value) || 0;
-
-    const battingSession = { runs, balls, notOut, fours, sixes, catches };
-    battingData.push(battingSession);
-    if (runs > highScore) highScore = runs;
-
-    const bowlingSession = { wickets, runsGiven, overs: oversBowled };
-    bowlingData.push(bowlingSession);
-    if (
-        wickets > bestBowling.wickets ||
-        (wickets === bestBowling.wickets && runsGiven < bestBowling.runsGiven)
-    ) {
-        bestBowling = { wickets, runsGiven };
+// Set up SQLite database
+const path = require('path');
+const dbPath = path.join(__dirname, 'database', 'cricket_stat.db');
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+        console.error('Error opening database:', err);
+    } else {
+        console.log('Connected to SQLite database');
     }
+});
 
-    localStorage.setItem("battingData", JSON.stringify(battingData));
-    localStorage.setItem("bowlingData", JSON.stringify(bowlingData));
+// Get all batting stats
+app.get('/api/batting-stats', (req, res) => {
+    db.all('SELECT * FROM batting_stats', [], (err, rows) => {
+        if (err) {
+            res.status(500).send('Error retrieving batting data');
+        } else {
+            res.status(200).json(rows);
+        }
+    });
+});
 
-    alert("Stats saved successfully!");
-    updateStatsDisplay();
-}
+// Get all bowling stats
+app.get('/api/bowling-stats', (req, res) => {
+    db.all('SELECT * FROM bowling_stats', [], (err, rows) => {
+        if (err) {
+            res.status(500).send('Error retrieving bowling data');
+        } else {
+            res.status(200).json(rows);
+        }
+    });
+});
 
-function updateBattingStats() {
-    const totalRuns = battingData.reduce((sum, session) => sum + session.runs, 0);
-    const totalBalls = battingData.reduce((sum, session) => sum + session.balls, 0);
-    const totalInnings = battingData.length;
-    const totalNotOuts = battingData.filter((session) => session.notOut).length;
-    const battingAverage =
-        totalInnings - totalNotOuts > 0
-            ? (totalRuns / (totalInnings - totalNotOuts)).toFixed(2)
-            : "N/A";
-    const strikeRate = totalBalls > 0 ? ((totalRuns / totalBalls) * 100).toFixed(2) : "N/A";
+// Add new stats
+app.post('/api/stats', (req, res) => {
+    const {
+        runs, balls, notOut, fours, sixes, catches,
+        wickets, runsGiven, overs
+    } = req.body;
 
-    document.getElementById("battingStats").innerHTML = `
-        <table>
-            <tr><th>Matches</th><th>Runs</th><th>HS</th><th>Avg</th><th>SR</th><th>4s</th><th>6s</th><th>Ct</th></tr>
-            <tr>
-                <td>${totalInnings}</td>
-                <td>${totalRuns}</td>
-                <td>${highScore}</td>
-                <td>${battingAverage}</td>
-                <td>${strikeRate}</td>
-                <td>${battingData.reduce((sum, session) => sum + session.fours, 0)}</td>
-                <td>${battingData.reduce((sum, session) => sum + session.sixes, 0)}</td>
-                <td>${battingData.reduce((sum, session) => sum + session.catches, 0)}</td>
-            </tr>
-        </table>
-    `;
-}
+    // Start a transaction
+    db.serialize(() => {
+        db.run('BEGIN TRANSACTION');
 
-function updateBowlingStats() {
-    const totalOvers = bowlingData.reduce((sum, session) => sum + session.overs, 0);
-    const totalWickets = bowlingData.reduce((sum, session) => sum + session.wickets, 0);
-    const totalRunsGiven = bowlingData.reduce((sum, session) => sum + session.runsGiven, 0);
-    const bowlingAverage =
-        totalWickets > 0 ? (totalRunsGiven / totalWickets).toFixed(2) : "N/A";
-    const economyRate = totalOvers > 0 ? (totalRunsGiven / totalOvers).toFixed(2) : "N/A";
+        // Insert batting stats
+        db.run(
+            'INSERT INTO batting_stats (runs, balls, notOut, fours, sixes, catches) VALUES (?, ?, ?, ?, ?, ?)',
+            [runs, balls, notOut ? 1 : 0, fours, sixes, catches],
+            function(err) {
+                if (err) {
+                    db.run('ROLLBACK');
+                    return res.status(500).send('Error saving batting stats');
+                }
+            }
+        );
 
-    document.getElementById("bowlingStats").innerHTML = `
-        <table>
-            <tr><th>Matches</th><th>Overs</th><th>Wickets</th><th>Best</th><th>Avg</th><th>Econ</th><th>Runs</th></tr>
-            <tr>
-                <td>${bowlingData.length}</td>
-                <td>${totalOvers.toFixed(1)}</td>
-                <td>${totalWickets}</td>
-                <td>${formatBestBowling(bestBowling)}</td>
-                <td>${bowlingAverage}</td>
-                <td>${economyRate}</td>
-                <td>${totalRunsGiven}</td>
-            </tr>
-        </table>
-    `;
-}
+        // Insert bowling stats
+        db.run(
+            'INSERT INTO bowling_stats (wickets, runsGiven, overs) VALUES (?, ?, ?)',
+            [wickets, runsGiven, overs],
+            function(err) {
+                if (err) {
+                    db.run('ROLLBACK');
+                    return res.status(500).send('Error saving bowling stats');
+                }
+            }
+        );
 
-function updateStatsDisplay() {
-    updateBattingStats();
-    updateBowlingStats();
-}
+        db.run('COMMIT', (err) => {
+            if (err) {
+                db.run('ROLLBACK');
+                return res.status(500).send('Error committing transaction');
+            }
+            res.status(201).json({ message: 'Stats saved successfully' });
+        });
+    });
+});
 
-updateStatsDisplay();
+// Delete all stats
+app.delete('/api/stats', (req, res) => {
+    db.serialize(() => {
+        db.run('BEGIN TRANSACTION');
+        
+        db.run('DELETE FROM batting_stats', (err) => {
+            if (err) {
+                db.run('ROLLBACK');
+                return res.status(500).send('Error deleting batting stats');
+            }
+        });
+
+        db.run('DELETE FROM bowling_stats', (err) => {
+            if (err) {
+                db.run('ROLLBACK');
+                return res.status(500).send('Error deleting bowling stats');
+            }
+        });
+
+        db.run('COMMIT', (err) => {
+            if (err) {
+                db.run('ROLLBACK');
+                return res.status(500).send('Error committing transaction');
+            }
+            res.status(200).json({ message: 'All stats deleted successfully' });
+        });
+    });
+});
+
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});

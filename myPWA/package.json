@@ -1,0 +1,14 @@
+{
+  "name": "cricket-stats-master",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "sqlite3": "^5.0.2",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5"
+  },
+  "scripts": {
+    "start": "node backend/server.js"
+  }
+}

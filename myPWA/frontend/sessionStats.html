@@ -20,15 +20,6 @@
     <h1>Session Stats</h1>
     
     <h2>Batting Sessions</h2>
-    <label for="battingSort">Sort by:</label>
-    <select id="battingSort" onchange="sortBatting(this.value)">
-        <option value="">Select</option>
-        <option value="runs">Runs</option>
-        <option value="balls">Balls</option>
-        <option value="fours">Fours</option>
-        <option value="sixes">Sixes</option>
-        <option value="catches">Catches</option>
-    </select>
     <table id="battingSessionsTable">
         <thead>
             <tr>
@@ -46,13 +37,6 @@
     </table>
 
     <h2>Bowling Sessions</h2>
-    <label for="bowlingSort">Sort by:</label>
-    <select id="bowlingSort" onchange="sortBowling(this.value)">
-        <option value="">Select</option>
-        <option value="wickets">Wickets</option>
-        <option value="runsGiven">Runs Given</option>
-        <option value="overs">Overs Bowled</option>
-    </select>
     <table id="bowlingSessionsTable">
         <thead>
             <tr>
@@ -67,137 +51,50 @@
     </table>
 
     <script>
-        let currentBattingData = []; 
-        let currentBowlingData = []; 
-
         function loadSessionStats() {
-            currentBattingData = JSON.parse(localStorage.getItem("battingData")) || [];
-            currentBowlingData = JSON.parse(localStorage.getItem("bowlingData")) || []; 
+            // Fetch batting stats
+            fetch('http://localhost:3001/api/batting-stats')
+                .then(response => response.json())
+                .then(battingData => {
+                    const battingTableBody = document.getElementById("battingSessionsTable").querySelector("tbody");
+                    battingTableBody.innerHTML = '';
+                    battingData.forEach((session, index) => {
+                        const row = battingTableBody.insertRow();
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${session.runs}</td>
+                            <td>${session.balls}</td>
+                            <td>${session.notOut ? 'Yes' : 'No'}</td>
+                            <td>${session.fours}</td>
+                            <td>${session.sixes}</td>
+                            <td>${session.catches}</td>
+                            <td><button onclick="editBattingSession(${index})">Edit</button></td>
+                        `;
+                    });
+                })
+                .catch(error => console.error('Error fetching batting stats:', error));
 
-            const battingTableBody = document.getElementById("battingSessionsTable").querySelector("tbody");
-            const bowlingTableBody = document.getElementById("bowlingSessionsTable").querySelector("tbody");
-
-            battingTableBody.innerHTML = '';
-            bowlingTableBody.innerHTML = '';
-
-            currentBattingData.forEach((session, index) => {
-                const row = battingTableBody.insertRow();
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${session.runs}</td>
-                    <td>${session.balls}</td>
-                    <td>${session.notOut ? 'Yes' : 'No'}</td>
-                    <td>${session.fours}</td>
-                    <td>${session.sixes}</td>
-                    <td>${session.catches}</td>
-                    <td><button onclick="editBattingSession(${index})">Edit</button></td>
-                `;
-            });
-
-            currentBowlingData.forEach((session, index) => {
-                const row = bowlingTableBody.insertRow();
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${session.wickets}</td>
-                    <td>${session.runsGiven}</td>
-                    <td>${session.overs}</td>
-                    <td><button onclick="editBowlingSession(${index})">Edit</button></td>
-                `;
-            });
+            // Fetch bowling stats
+            fetch('http://localhost:3001/api/bowling-stats')
+                .then(response => response.json())
+                .then(bowlingData => {
+                    const bowlingTableBody = document.getElementById("bowlingSessionsTable").querySelector("tbody");
+                    bowlingTableBody.innerHTML = '';
+                    bowlingData.forEach((session, index) => {
+                        const row = bowlingTableBody.insertRow();
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${session.wickets}</td>
+                            <td>${session.runsGiven}</td>
+                            <td>${session.overs}</td>
+                            <td><button onclick="editBowlingSession(${index})">Edit</button></td>
+                        `;
+                    });
+                })
+                .catch(error => console.error('Error fetching bowling stats:', error));
         }
 
-        function sortBatting(criteria) {
-            if (criteria) {
-                currentBattingData.sort((a, b) => a[criteria] - b[criteria]); 
-            }
-            updateBattingTable(currentBattingData);
-        }
-
-        function updateBattingTable(battingData) {
-            const battingTableBody = document.getElementById("battingSessionsTable").querySelector("tbody");
-            battingTableBody.innerHTML = '';
-            battingData.forEach((session, index) => {
-                const row = battingTableBody.insertRow();
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${session.runs}</td>
-                    <td>${session.balls}</td>
-                    <td>${session.notOut ? 'Yes' : 'No'}</td>
-                    <td>${session.fours}</td>
-                    <td>${session.sixes}</td>
-                    <td>${session.catches}</td>
-                    <td><button onclick="editBattingSession(${index})">Edit</button></td>
-                `;
-            });
-        }
-
-        function sortBowling(criteria) {
-            if (criteria) {
-                currentBowlingData.sort((a, b) => {
-                    if (criteria === 'overs') {
-                        return parseFloat(a[criteria]) - parseFloat(b[criteria]); 
-                    }
-                    return a[criteria] - b[criteria]; 
-                });
-            }
-            updateBowlingTable(currentBowlingData); 
-        }
-
-        function updateBowlingTable(bowlingData) {
-            const bowlingTableBody = document.getElementById("bowlingSessionsTable").querySelector("tbody");
-            bowlingTableBody.innerHTML = '';
-            bowlingData.forEach((session, index) => {
-                const row = bowlingTableBody.insertRow();
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${session.wickets}</td>
-                    <td>${session.runsGiven}</td>
-                    <td>${session.overs}</td>
-                    <td><button onclick="editBowlingSession(${index})">Edit</button></td>
-                `;
-            });
-        }
-
-        function editBattingSession(displayedIndex) {
-            const session = currentBattingData[displayedIndex]; 
-
-            const runs = prompt("Edit Runs:", session.runs);
-            const balls = prompt("Edit Balls Faced:", session.balls);
-            const notOut = confirm("Is Not Out?") ? true : false;
-            const fours = prompt("Edit Fours:", session.fours);
-            const sixes = prompt("Edit Sixes:", session.sixes);
-            const catches = prompt("Edit Catches:", session.catches);
-
-            currentBattingData[displayedIndex] = {
-                runs: parseInt(runs),
-                balls: parseInt(balls),
-                notOut: notOut,
-                fours: parseInt(fours),
-                sixes: parseInt(sixes),
-                catches: parseInt(catches)
-            };
-
-            localStorage.setItem("battingData", JSON.stringify(currentBattingData));
-            loadSessionStats(); 
-        }
-
-        function editBowlingSession(displayedIndex) {
-            const session = currentBowlingData[displayedIndex]; 
-
-            const wickets = prompt("Edit Wickets:", session.wickets);
-            const runsGiven = prompt("Edit Runs Given:", session.runsGiven);
-            const overs = prompt("Edit Overs Bowled:", session.overs);
-
-            currentBowlingData[displayedIndex] = {
-                wickets: parseInt(wickets),
-                runsGiven: parseInt(runsGiven),
-                overs: parseFloat(overs)
-            };
-
-            localStorage.setItem("bowlingData", JSON.stringify(currentBowlingData));
-            loadSessionStats(); 
-        }
-
+        // Call to load session stats on page load
         loadSessionStats();
     </script>
 </body>

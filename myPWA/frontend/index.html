@@ -45,39 +45,42 @@
             const sixes = parseInt(document.getElementById("sixes").value) || 0;
             const catches = parseInt(document.getElementById("catches").value) || 0;
 
-            const battingData = JSON.parse(localStorage.getItem("battingData")) || [];
-            const bowlingData = JSON.parse(localStorage.getItem("bowlingData")) || [];
-
-            const newBattingSession = {
-                runs,
-                balls,
-                notOut,
-                fours,
-                sixes,
-                catches
-            };
-
-            const newBowlingSession = {
-                wickets,
-                runsGiven,
-                overs: oversBowled
-            };
-
-            battingData.push(newBattingSession);
-            bowlingData.push(newBowlingSession);
-
-            localStorage.setItem("battingData", JSON.stringify(battingData));
-            localStorage.setItem("bowlingData", JSON.stringify(bowlingData));
-
-            alert("Stats saved successfully!");
+            fetch('http://localhost:3001/api/stats', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    runs, balls, notOut, fours, sixes, catches,
+                    wickets, runsGiven, overs: oversBowled
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Stats saved successfully!");
+                document.querySelector('form').reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error saving stats!");
+            });
         }
 
         function resetStats() {
             if (confirm("Are you sure you want to reset all stats? This cannot be undone.")) {
-                localStorage.clear();
-                document.querySelector('form').reset();
-                alert("All stats have been reset successfully!");
-                window.location.reload();
+                fetch('http://localhost:3001/api/stats', {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert("All stats have been reset successfully!");
+                    document.querySelector('form').reset();
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Error resetting stats!");
+                });
             }
         }
     </script>

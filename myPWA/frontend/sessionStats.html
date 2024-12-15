@@ -74,7 +74,7 @@
             fetch('http://localhost:3001/api/batting-stats')
                 .then(response => response.json())
                 .then(battingData => {
-                    currentBattingData = battingData; // Store data for sorting
+                    currentBattingData = battingData; 
                     updateBattingTable(currentBattingData);
                 })
                 .catch(error => console.error('Error fetching batting stats:', error));
@@ -82,7 +82,7 @@
             fetch('http://localhost:3001/api/bowling-stats')
                 .then(response => response.json())
                 .then(bowlingData => {
-                    currentBowlingData = bowlingData; // Store data for sorting
+                    currentBowlingData = bowlingData; 
                     updateBowlingTable(currentBowlingData);
                 })
                 .catch(error => console.error('Error fetching bowling stats:', error));

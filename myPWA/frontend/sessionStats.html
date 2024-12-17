@@ -52,7 +52,6 @@
                 <th>Fours</th>
                 <th>Sixes</th>
                 <th>Catches</th>
-                <th>Edit</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -73,7 +72,6 @@
                 <th>Wickets</th>
                 <th>Runs Given</th>
                 <th>Overs Bowled</th>
-                <th>Edit</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -121,7 +119,6 @@
                     <td>${session.fours}</td>
                     <td>${session.sixes}</td>
                     <td>${session.catches}</td>
-                    <td><button onclick="editBattingSession(${index})">Edit</button></td>
                 `;
             });
         }
@@ -148,7 +145,6 @@
                     <td>${session.wickets}</td>
                     <td>${session.runsGiven}</td>
                     <td>${session.overs}</td>
-                    <td><button onclick="editBowlingSession(${index})">Edit</button></td>
                 `;
             });
         }

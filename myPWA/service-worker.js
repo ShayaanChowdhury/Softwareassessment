@@ -5,7 +5,7 @@ const urlsToCache = [
     '/myPWA/frontend/index.html',
     '/myPWA/frontend/batting.html',
     '/myPWA/frontend/bowling.html',
-    '/myPWA/frontend/sessionsStats.html',
+    '/myPWA/frontend/sessionStats.html',
     '/myPWA/frontend/style.css',
     '/myPWA/frontend/script.js',
     '/myPWA/frontend/logo.png',
@@ -34,7 +34,10 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request).then(response => {
             // Return the cached response if found, otherwise fetch from network
-            return response || fetch(event.request).catch(() => caches.match('/myPWA/frontend/homepage.html'));
+            return response || fetch(event.request).catch(() => {
+                // Fallback to homepage if the request fails
+                return caches.match('/myPWA/frontend/homepage.html');
+            });
         })
     );
 });

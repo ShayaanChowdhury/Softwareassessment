@@ -1,15 +1,19 @@
 const CACHE_NAME = 'Cricket-cache-v1';
 const urlsToCache = [
+    '/myPWA/frontend/',
     '/myPWA/frontend/homepage.html',
     '/myPWA/frontend/index.html',
     '/myPWA/frontend/batting.html',
     '/myPWA/frontend/bowling.html',
     '/myPWA/frontend/sessionsStats.html',
-
-    // Add additional assets if needed
+    '/myPWA/frontend/style.css',
+    '/myPWA/frontend/script.js',
+    '/myPWA/frontend/logo.png',
+    '/myPWA/Icons/logo1.png',
+    '/myPWA/Icons/logo2.png',
+    '/myPWA/Icons/desktop.png',
+    '/myPWA/Icons/phone.png',
 ];
-
-
 // Install the service worker
 // Install event
 self.addEventListener('install', event => {
@@ -54,4 +58,3 @@ self.addEventListener('activate', event => {
         })
     );
 });
-

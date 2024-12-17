@@ -1,8 +1,11 @@
-const CACHE_NAME = 'study-log-cache-v1';
+const CACHE_NAME = 'Cricket-cache-v1';
 const urlsToCache = [
-    '/study-log-app/frontend/index.html',
-    '/study-log-app/frontend/style.css',
-    '/study-log-app/frontend/app.js',
+    '/myPWA/frontend/homepage.html',
+    '/myPWA/frontend/index.html',
+    '/myPWA/frontend/batting.html',
+    '/myPWA/frontend/bowling.html',
+    '/myPWA/frontend/sessionsStats.html',
+
     // Add additional assets if needed
 ];
 
@@ -27,7 +30,7 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request).then(response => {
             // Return the cached response if found, otherwise fetch from network
-            return response || fetch(event.request).catch(() => caches.match('study-log-app/frontend/index.html'));
+            return response || fetch(event.request).catch(() => caches.match('/myPWA/frontend/homepage.html'));
         })
     );
 });
